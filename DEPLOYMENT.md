@@ -15,13 +15,16 @@ wrangler login
 `wrangler.toml` 파일에서 다음을 확인하세요:
 
 ```toml
-name = "lunch-menu-scraper"  # 원하는 워커 이름으로 변경
+name = "lunch-menu-scraper"
 main = "src/index.ts"
 compatibility_date = "2024-11-06"
 compatibility_flags = ["nodejs_compat"]
 
 [triggers]
-crons = ["0 11 * * 1-5"]  # 매일 평일 오전 11시
+crons = [
+  "*/10 0-2 * * 1-5"  # 매일 평일 한국시간 오전 9시~11시 (UTC 0시~2시), 10분마다 실행
+]
+
 ```
 
 ## 3. 배포

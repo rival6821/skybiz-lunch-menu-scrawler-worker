@@ -5,9 +5,10 @@ Cloudflare Workers를 사용한 점심 메뉴 이미지 수집 워커입니다.
 ## 기능
 
 - 카카오톡 채널에서 점심 메뉴 이미지를 자동으로 수집
-- 매일 평일 오전 11시에 자동 실행 (크론 스케줄)
+- 매일 평일 한국시간 오전 9시~11시 50분, 10분 간격으로 자동 실행 (크론 스케줄)
 - 수동 트리거 지원
 - TypeScript로 작성됨
+- GitHub Actions를 통한 자동 배포
 
 ## 지원하는 식당
 
@@ -45,10 +46,22 @@ npm run deploy
 npm run type-check
 ```
 
+### 프로덕션 배포
+```bash
+npm run deploy:production
+```
+
+### 테스트 (타입 체크)
+```bash
+npm test
+```
+
 ## 사용법
 
 ### 자동 실행
-평일 9시부터 12시까지 10분간격으로 실행
+매일 평일 (월~금) 한국시간 오전 9시부터 11시 50분까지 10분 간격으로 실행됩니다.
+
+**실행 시간표**: 09:00, 09:10, 09:20, 09:30, 09:40, 09:50, 10:00, 10:10, 10:20, 10:30, 10:40, 10:50, 11:00, 11:10, 11:20, 11:30, 11:40, 11:50
 
 ### 수동 실행
 ```bash
@@ -58,9 +71,13 @@ curl -X POST https://your-worker-domain/trigger
 ## 프로젝트 구조
 
 ```
+.github/
+└── workflows/
+    └── deploy.yml  # GitHub Actions 배포 워크플로우
 src/
-├── index.ts    # 메인 워커 코드
-└── env.ts      # 환경 타입 정의
+├── index.ts        # 메인 워커 코드
+└── env.ts          # 환경 타입 정의
+wrangler.toml       # Cloudflare Workers 설정
 ```
 
 ## GitHub Actions 배포 설정
@@ -81,14 +98,25 @@ GitHub 리포지토리 Settings > Secrets and variables > Actions에서 다음 s
 ### 3. 자동 배포
 - `main` 브랜치에 push하면 자동으로 배포됩니다
 - Pull Request 시에는 타입 체크만 실행됩니다
+- Node.js 24 환경에서 실행됩니다
+
+### 4. 워크플로우 단계
+1. **Test Job**: TypeScript 타입 체크 실행
+2. **Deploy Job**: 테스트 통과 시 Cloudflare Workers에 배포
 
 ## 환경 설정
 
-`wrangler.toml` 파일에서 다음 설정을 확인하세요:
+### Cloudflare Workers 설정 (`wrangler.toml`)
 
-- `compatibility_date`: Cloudflare Workers 호환성 날짜
-- `triggers.crons`: 크론 스케줄 설정
-- `compatibility_flags`: Node.js 호환성 플래그
+- `name`: 워커 이름 (`lunch-menu-scraper`)
+- `compatibility_date`: `2024-11-06`
+- `compatibility_flags`: `["nodejs_compat"]`
+- `triggers.crons`: 한국시간 기준 스케줄 (`"*/10 0-2 * * 1-5"`)
+
+### 크론 스케줄 상세
+- **UTC 시간**: `0-2시` (매 10분마다)
+- **한국시간**: `9-11시 50분` (매 10분마다)
+- **요일**: 월요일~금요일 (평일)
 
 ## API 엔드포인트
 
@@ -104,6 +132,14 @@ GitHub 리포지토리 Settings > Secrets and variables > Actions에서 다음 s
 
 ## 기술 스택
 
-- TypeScript
-- Cloudflare Workers
-- Wrangler CLI
+- **TypeScript** v5.8.3
+- **Cloudflare Workers** (Runtime)
+- **Wrangler CLI** v4.22.0
+- **GitHub Actions** (CI/CD)
+- **Node.js** 24 (Development)
+
+## 개발 환경
+
+- Node.js 18+ 권장
+- npm 또는 yarn
+- Git
