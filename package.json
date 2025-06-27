@@ -1,0 +1,28 @@
+{
+  "name": "skybiz-lunch-menu-scrawler-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for scraping lunch menu images",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:production": "wrangler deploy --env production",
+    "build": "wrangler build",
+    "type-check": "tsc --noEmit",
+    "lint": "tsc --noEmit",
+    "test": "npm run type-check"
+  },
+  "keywords": [
+    "cloudflare",
+    "worker",
+    "typescript",
+    "lunch-menu"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241106.0",
+    "typescript": "^5.3.3",
+    "wrangler": "^3.78.12"
+  }
+}
