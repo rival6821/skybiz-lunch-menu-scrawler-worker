@@ -5,5 +5,5 @@ compatibility_flags = ["nodejs_compat"]
 
 [triggers]
 crons = [
-  "*/10 0-2 * * 1-5"  # 매일 평일 한국시간 오전 9시~11시 (UTC 0시~2시), 10분마다 실행
+  "*/10 0-2 * ? MON-FRI"  # 매일 평일 한국시간 오전 9시~11시 (UTC 0시~2시), 10분마다 실행
 ]
